@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+	<title>Inventory Homepage</title>
+</head>
+<body>
+	<h1>Inventory Homepage</h1>
+
+	<form method="get" role="search">
+		<label for="item-search">Search items</label>
+		<input
+			id="item-search"
+			name="search"
+			type="search"
+			placeholder="Search items..."
+			aria-label="Search items"
+			value="{{ request.GET.search|default:'' }}"
+			required
+		/>
+		<button type="submit">Search</button>
+	</form>
+
+	<section>
+		<h2>Item Information</h2>
+		{% if request.GET.search %}
+			{% if item %}
+			<div aria-live="polite">
+				<p><strong>Name:</strong> {{ item.name }}</p>
+				<p><strong>Category:</strong> {{ item.category }}</p>
+				<p><strong>Quantity:</strong> {{ item.quantity }}</p>
+				<p><strong>Price:</strong> ${{ item.price }}</p>
+			</div>
+			{% else %}
+			<p>No item found for “{{ request.GET.search }}”.</p>
+			{% endif %}
+		{% else %}
+		<p>Search for an item to view its information.</p>
+		{% endif %}
+	</section>
+</body>
+</html>
