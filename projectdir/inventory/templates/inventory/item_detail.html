@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>{{ item.name|default:"Item Details" }}</title>
+</head>
+<body>
+	<main>
+		<h1>{{ item.name|default:"Item Details" }}</h1>
+
+		<dl>
+			<dt>Description</dt>
+			<dd>{{ item.description|default:"No description available." }}</dd>
+
+			<dt>Price</dt>
+			<dd>${{ item.price|default:"Not available" }}</dd>
+
+			<dt>Last Cost</dt>
+			<dd>${{ item.last_cost	|default:"Not available" }}</dd>
+			
+		</dl>
+
+		<h2>Quantity on Hand by Location</h2>
+		<table>
+			<thead>
+				<tr>
+					<th scope="col">Location Number</th>
+					<th scope="col">Location Name</th>
+					<th scope="col">Item Quantity</th>
+				</tr>
+			</thead>
+			<tbody>
+				{% for row in table %}
+				<tr>
+					<td>{{ row.location_number|default:"-" }}</td>
+					<td>{{ row.location_name|default:"-" }}</td>
+					<td>{{ row.quantity_on_hand|default:"0" }}</td>
+				</tr>
+				{% empty %}
+				<tr>
+					<td colspan="3">No location quantities available.</td>
+				</tr>
+				{% endfor %}
+			</tbody>
+		</table>
+	</main>
+	
+</body>
+</html>

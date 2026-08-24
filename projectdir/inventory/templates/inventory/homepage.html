@@ -21,7 +21,7 @@
 		/>
 		<button type="submit">Search</button>
 	</form>
-
+<!-- TODO page this isn't functional -->
 	<section>
 		<h2>Item Information</h2>
 		{% if request.GET.search %}
@@ -39,5 +39,24 @@
 		<p>Search for an item to view its information.</p>
 		{% endif %}
 	</section>
+
+	{% if item %}
+	<table>
+		<caption>Inventory location and quantity</caption>
+		<thead>
+			<tr>
+				<th scope="col">Location</th>
+				<th scope="col">Quantity on hand</th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr>
+				<td>{{ item.location }}</td>
+				<td>{{ item.quantity }}</td>
+			</tr>
+		</tbody>
+	</table>
+	{% endif %}
+    
 </body>
 </html>
