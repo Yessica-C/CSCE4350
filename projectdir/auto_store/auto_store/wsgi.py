@@ -1,5 +1,5 @@
 """
-WSGI config for InventorySystem project.
+WSGI config for auto_store project.
 
 It exposes the WSGI callable as a module-level variable named ``application``.
 
@@ -11,6 +11,6 @@ import os
 
 from django.core.wsgi import get_wsgi_application
 
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'InventorySystem.settings')
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'auto_store.settings')
 
 application = get_wsgi_application()
