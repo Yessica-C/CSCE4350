@@ -1,26 +1,8 @@
 from django.shortcuts import get_object_or_404, render
 from django.http import Http404
-from .models import Item, Location, Inventory_Entry
-
-def quantity_on_hand(item_id):
-    sum = 0
-    #find all inventory entries for this item
-    entries = Inventory_Entry.objects.filter(item_id=item_id)
-    #add quantity in each entry to sum  
-    for entry in entries:
-        sum += entry.quantity_on_hand
-    #return sum
-    return sum
-
-def quantity_on_hand_by_location(item_id, location_id):
-    sum = 0
-    #find all inventory entries that match item and location
-    entries = Inventory_Entry.objects.filter(item_id=item_id, location_id=location_id)
-    #add quantity in each entry to sum
-    for entry in entries:
-        sum += entry.quantity_on_hand
-    #return sum
-    return sum
+from .models import Item, Location
+from .utils import quantity_on_hand
+from .utils import quantity_on_hand_by_location
 
 # hello world page
 def inventory_homepage(request):
