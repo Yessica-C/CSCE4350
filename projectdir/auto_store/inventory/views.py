@@ -16,14 +16,13 @@ def item_zoom(request, item_id):
         item = Item.objects.get(id=item_id)
     except Item.DoesNotExist:
         return render(request, 'inventory/item_not_found.html', status=404)
-        
-    inventory_entries = Inventory_Entry.objects.filter(item_id=item_id)
-    table = []
-    for entry in inventory_entries:
-        location = Location.objects.get(id=entry.location_id.id)
-        table.append({
+
+    locations = Location.objects.all()
+    loc_table = []
+    for location in locations:
+        loc_table.append({
             'location_id': location.id,
             'location_address': location.address,
-            'quantity_on_hand': entry.quantity_on_hand
+            'quantity_on_hand': -1
         })
-    return render(request, 'inventory/item_detail.html', {'item': item, 'table': table})
+    return render(request, 'inventory/item_zoom.html', {'item': item, 'loc_table': loc_table})

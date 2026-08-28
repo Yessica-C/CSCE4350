@@ -9,17 +9,20 @@
 	<h1>All Items</h1>
 	<table>
 		<tbody>
-			{% for item in items %}
-				<tr>
-					{% for field in item.fields %}
-						<td>{{ item }}</td>
-					{% endfor %}
-				</tr>
-			{% empty %}
-				<tr>
-					<td colspan="100%">No items found.</td>
-				</tr>
-			{% endfor %}
+            <tr>
+                <th>ID</th>
+                <th>Name</th>
+            </tr>
+                {% for item in items %}
+                    <tr>
+                        <td>{{ item.id }}</td>
+                        <td>{{ item.name }}</td>
+                    </tr>
+                {% empty %}
+                    <tr>
+                        <td colspan="100%">No items found.</td>
+                    </tr>
+                {% endfor %}
 		</tbody>
 	</table>
 </body>
