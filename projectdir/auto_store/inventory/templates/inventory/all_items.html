@@ -12,11 +12,19 @@
             <tr>
                 <th>ID</th>
                 <th>Name</th>
+                <th>Description</th>
+                <th>Price</th>
+                <th>Last Cost</th>
+                <th>Total Quantity</th>
             </tr>
-                {% for item in items %}
+                {% for entry in table %}
                     <tr>
-                        <td>{{ item.id }}</td>
-                        <td>{{ item.name }}</td>
+                        <td>{{ entry.item_id }}</td>
+                        <td>{{ entry.item_name }}</td>
+                        <td>{{ entry.item_description }}</td>
+                        <td>{{ entry.item_price }}</td>
+                        <td>{{ entry.item_last_cost }}</td>
+                        <td>{{ entry.total_quantity }}</td>
                     </tr>
                 {% empty %}
                     <tr>

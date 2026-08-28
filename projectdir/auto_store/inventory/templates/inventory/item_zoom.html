@@ -7,13 +7,19 @@
   </head>
   <body>
     <h1>Item Zoom</h1>
+    <h2>{{item.name}} - {{total_quantity}}</h2>
     <table>
       <tr>
-        <th>ID</th>
-        <th>Name</th>
-      </tr>
-        <td>{{ item.id }}</td>
-        <td>{{ item.name }}</td>
+        <th>Location</th>
+        <th>Quantity</th>
+        <th>Address</th>
+        {% for location in loc_table %}
+          <tr>
+            <td>{{ location.location_id }}</td>
+            <td>{{ location.quantity_on_hand }}</td>
+            <td>{{ location.location_address }}</td>
+          </tr>
+        {% endfor %}
     </table>
   </body>
 </html>
