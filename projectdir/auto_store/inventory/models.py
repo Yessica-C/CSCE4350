@@ -23,4 +23,4 @@ class Inventory_Entry(models.Model):
     location_id = models.ForeignKey(Location, on_delete=models.CASCADE)
     quantity_on_hand = models.IntegerField()
     def __str__(self):
-        return "item #" +str(self.item_id) + " | location #" + str(self.location_id) + " | quantity:" + str(self.quantity_on_hand)1
+        return "item #" +str(self.item_id) + " | location #" + str(self.location_id) + " | quantity:" + str(self.quantity_on_hand)
