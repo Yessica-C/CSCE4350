@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>All Purchase Orders</title>
+</head>
+<body>
+	<header>
+		<h1>All Purchase Orders</h1>
+	</header>
+	<p><a href="/inventory/">Inventory Home</a></p>
+    <table>
+        <tbody>
+            <tr>
+                <th>PO Number</th>
+                <th>Order Date</th>
+            </tr>
+                {% for entry in table %}
+                    <tr>
+                        <td>| {{ entry.po_num }}</td>
+                        <td>| {{ entry.date }}</td>
+                        <td>| <a href="{{ entry.po_num }}">zoom</a></td>
+                    </tr>
+                {% endfor %}
+        </tbody>
+    </table>
+</body>
+</html>
