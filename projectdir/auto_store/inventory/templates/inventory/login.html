@@ -100,11 +100,18 @@
         .footer-text a:hover {
             text-decoration: underline;
         }
+
+        .error-text {
+            color: red;
+            text-align: center;
+            margin-bottom: 30px;
+        }
     </style>
 </head>
 <body>
     <div class="login-container">
         <h1>Auto Store Login</h1>
+        <div class="error-text">{{ error_message }}</div>
         <form method="POST">
             {% csrf_token %}
             <div class="form-group">
