@@ -47,10 +47,20 @@
 <body>
     <div class="container">
         <h1>Auto Store Homepage</h1>
-        <h2>Welcome, {{ user.username }}.</h2>
+
+        {% if user and user.is_authenticated %}
+            <h2>Welcome, {{ user.first_name }} {{ user.last_name }}.</h2>
+        {% else %}
+            <h2>Welcome, guest.</h2>
+        {% endif %}
+
         <div class="nav-links">
             <a href="/inventory/">View Inventory</a>
-            <a href="/login/">Login</a>
+            {% if user and user.is_authenticated %}
+                <a href="/logout/">Logout</a>
+            {% else %}
+                <a href="/login/">Login</a>
+            {% endif %}
         </div>
     </div>
 </body>

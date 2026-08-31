@@ -1,9 +1,9 @@
 from django.shortcuts import get_object_or_404, render
 from django.http import Http404
+from django.contrib.auth import logout, login
 from .models import Item, Location
 from .utils import quantity_on_hand, quantity_on_hand_by_location
 from .utils import get_full_po, get_po_number_list
-
 
 # hello world page
 
@@ -55,8 +55,12 @@ def item_zoom(request, item_id):
         })
     return render(request, 'inventory/item_zoom.html', {'item': item, 'loc_table': loc_table, 'total_quantity': quantity_on_hand(item_id)})
 
-def login(request):
+def login_view(request):
     return render(request, 'inventory/login.html')
+
+def logout_view(request):
+    logout(request)
+    return render(request, 'inventory/logout.html')
 
 def po_zoom(request, po_num):
     po_table = get_full_po(po_num)
