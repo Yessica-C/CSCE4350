@@ -33,6 +33,9 @@ def all_pos(request):
         })
     return render(request, 'inventory/all_pos.html', {'table': table})
 
+def homepage(request):
+    return render(request, 'inventory/homepage.html')
+
 def inventory_homepage(request):
     items = Item.objects.all()
     return render(request, 'inventory/inventory_homepage.html', {'items': items})
@@ -51,6 +54,9 @@ def item_zoom(request, item_id):
             'quantity_on_hand': quantity_on_hand_by_location(item_id, location.id)
         })
     return render(request, 'inventory/item_zoom.html', {'item': item, 'loc_table': loc_table, 'total_quantity': quantity_on_hand(item_id)})
+
+def login(request):
+    return render(request, 'inventory/login.html')
 
 def po_zoom(request, po_num):
     po_table = get_full_po(po_num)
