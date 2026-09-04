@@ -1,0 +1,36 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Add Item</title>
+    <link rel="stylesheet" href="{% static 'css/main.css' %}">
+</head>
+<body>
+    <div class="panel-container">
+        <h1>Add Item</h1>
+        <form method="post">
+            {% csrf_token %}
+
+            <label for="item-id">ID:</label>
+            <div id="item-id" class="readonly-field">{{ id }}</div>
+            
+            <label for="name">Name:</label>
+            <input type="text" id="name" name="name" required>
+
+            <label for="description">Description:</label>
+            <textarea id="description" name="description" rows="4"></textarea>
+
+            <label for="last_cost">Last Cost:</label>
+            <input type="number" id="last_cost" name="last_cost" min="0" step="0.01" required>
+
+            <label for="price">Price:</label>
+            <input type="number" id="price" name="price" min="0" step="0.01" required>
+
+            <button class="btn" type="submit">POST</button>
+        </form>
+        <a class="btn" href="/inventory/items/">Cancel</a>
+    </div>
+</body>
+</html>
