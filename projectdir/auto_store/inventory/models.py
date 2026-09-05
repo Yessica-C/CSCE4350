@@ -34,5 +34,6 @@ class Purchase_Order(models.Model):
     quantity_ordered = models.IntegerField()
     quantity_received = models.IntegerField(default=0)
     item_cost = models.DecimalField(max_digits=10, decimal_places=2)
+    posted = models.BooleanField(default=False)
     def __str__(self):
         return "PO #" + str(self.po_num) + " | item #" + str(self.item_id.id) + " | location #" + str(self.location_id.id) + " | ordered:" + str(self.quantity_ordered) + " | received:" + str(self.quantity_received)

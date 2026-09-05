@@ -19,7 +19,6 @@ def add_item(request):
 
         # Redirect to the all_items view after successful creation
         return redirect('item_overview')
-
     
     highest_item_number = Item.objects.aggregate(max_number=Max('id'))['max_number']
     id = highest_item_number + 1 if highest_item_number is not None else 1
