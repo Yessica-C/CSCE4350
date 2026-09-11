@@ -11,6 +11,12 @@
         <h1>Add Purchase Order</h1>
         <form method="post" id="purchase-order-form">
             {% csrf_token %}
+            <input type="hidden" name="po_num" value="{{ new_po_num }}">
+            <input type="hidden" name="po_data" id="po-data">
+
+            
+            <p class="error" role="alert">{{ error_message }}</p>
+            
 
             <label for="po_number">Po #{{new_po_num}}</label>
             
@@ -20,14 +26,15 @@
                         <th>Item Number</th>
                         <th>Quantity</th>
                         <th>Cost</th>
-                        <th></th>
+                        <th>Location</th>
                     </tr>
                 </thead>
                 <tbody id="po-lines">
                     <tr>
-                        <td><input type="text" name="name" required></td>
-                        <td><input type="number" name="quantity" min="0" required></td>
-                        <td><input type="number" name="cost" min="0" step="0.01" required></td>
+                        <td><input type="text" name="item_id" required></td>
+                        <td><input type="number" name="quantity_ordered" min="0" required></td>
+                        <td><input type="number" name="item_cost" min="0" step="0.01" required></td>
+                        <td><input type ="number" name="location_id" required></td>
                         <td><button type="button" class="btn remove-line" onclick="removeLine(this)">Remove</button></td>
                     </tr>
                 </tbody>
@@ -41,6 +48,18 @@
         <a class="btn" href="/inventory/purchase_orders/">Cancel</a>
     </div>
     <script>
+        document.getElementById('purchase-order-form').addEventListener('submit', function () {
+            const rows = Array.from(document.querySelectorAll('#po-lines tr'));
+            const tableData = rows.map(row => ({
+                item_id: row.querySelector('[name="item_id"]').value,
+                quantity_ordered: row.querySelector('[name="quantity_ordered"]').value,
+                item_cost: row.querySelector('[name="item_cost"]').value,
+                location_id: row.querySelector('[name="location_id"]').value
+            }));
+
+            document.getElementById('po-data').value = JSON.stringify(tableData);
+        });
+
         function addLine() {
             const row = document.querySelector('#po-lines tr').cloneNode(true);
             row.querySelectorAll('input').forEach(input => input.value = '');

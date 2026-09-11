@@ -14,14 +14,20 @@
     <table>
         <tbody>
             <tr>
-                <th>PO Number</th>
-                <th>Order Date</th>
+                <th>| PO Number | </th>
+                <th>Status | </th>
+                <th>Order Date | </th>
             </tr>
                 {% for entry in table %}
                     <tr>
                         <td>| {{ entry.po_num }}</td>
+                        <td>| {{ entry.status }}</td>
                         <td>| {{ entry.date }}</td>
-                        <td>| <a href="{{ entry.po_num }}">zoom</a></td>
+                        <td>| <a href="/inventory/purchase_orders/zoom/{{ entry.po_num }}">zoom</a></td>
+                        {% if entry.status == 'Unposted' %}
+                            <td>| <a href="/inventory/purchase_orders/edit/{{ entry.po_num }}">edit</a></td>
+                            <td>| <a href="/inventory/purchase_orders/delete/{{ entry.po_num }}">delete</a></td>
+                        {% endif %}
                     </tr>
                 {% endfor %}
         </tbody>

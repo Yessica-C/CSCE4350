@@ -10,25 +10,23 @@
 		<h1>Purchase Order Zoom</h1>
 	</header>
 	<a href="/inventory/purchase_orders/">Back to Overview</a>
-	<h2>PO #{{ po_num }}</h2>
+	<h2>PO #{{ po_object.po_num }} - {{ po_object.status }}</h2>
 	<table>
 		<thead>
 			<tr>
-				<th>Item</th>
-				<th>Ordered</th>
-				<th>Received</th>
-                <th>Location</th>
-                <th>Order Date</th>
+				<th>| Item | </th>
+				<th>Ordered | </th>
+				<th>Received | </th>
+                <th>Location | </th>
 			</tr>
 		</thead>
 		<tbody>
 			{% for entry in po_table %}
 			<tr>
-				<td>| {{ entry.item_id.id }}</td>
-				<td>| {{ entry.quantity_ordered }}</td>
-				<td>| {{ entry.quantity_received }}</td>
-                <td>| {{ entry.location_id.id }}</td>
-                <td>| {{ entry.order_date }}</td>
+				<td>| {{ entry.item_id.id }} | </td>
+				<td>{{ entry.quantity_ordered }} | </td>
+				<td>{{ entry.quantity_received }} | </td>
+                <td>{{ entry.location_id.id }} | </td>
 			</tr>
 			{% endfor %}
 		</tbody>

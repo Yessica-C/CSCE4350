@@ -30,11 +30,9 @@ class Purchase_Order_Data(models.Model):
     item_id = models.ForeignKey(Item, on_delete=models.CASCADE)
     location_id = models.ForeignKey(Location, on_delete=models.CASCADE)
     po_num = models.ForeignKey('Purchase_Order', on_delete=models.CASCADE)
-    order_date = models.DateField()
     quantity_ordered = models.IntegerField()
     quantity_received = models.IntegerField(default=0)
     item_cost = models.DecimalField(max_digits=10, decimal_places=2)
-    posted = models.BooleanField(default=False)
     def __str__(self):
         return "PO #" + str(self.po_num) + " | item #" + str(self.item_id.id) + " | location #" + str(self.location_id.id) + " | ordered:" + str(self.quantity_ordered) + " | received:" + str(self.quantity_received)
 
@@ -44,4 +42,5 @@ class Purchase_Order(models.Model):
         OPEN = 'OPEN', ('Shipped')
         COMPLETE = 'CMPL', ('Complete')
     po_num = models.IntegerField(primary_key=True)
+    order_date = models.DateField(null=True, blank=True)
     status = models.TextField(choices=Status.choices, default='Unposted', max_length=10)
