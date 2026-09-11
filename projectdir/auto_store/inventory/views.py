@@ -4,6 +4,7 @@ from django.shortcuts import get_object_or_404, redirect, render
 from django.http import Http404
 from django.contrib.auth import authenticate, authenticate, logout, login
 from django.db.models import Max
+from django.utils import timezone
 from .models import Item, Location, Purchase_Order, Purchase_Order_Data
 from .utils import quantity_on_hand, quantity_on_hand_by_location, get_full_po
 
@@ -99,6 +100,7 @@ def edit_po(request, po_num):
             return redirect('purchase_order_overview')
         if value == 'post': # post, lock editing on PO and move to "open" status
             po.status = 'Open'  
+            po.order_date = timezone.now()
             po.save()  
             return redirect('purchase_order_overview')
     #normal page request
