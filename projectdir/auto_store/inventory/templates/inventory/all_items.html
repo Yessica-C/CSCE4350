@@ -29,7 +29,8 @@
                         <td>{{ entry.item_price }}</td>
                         <td>{{ entry.item_last_cost }}</td>
                         <td>{{ entry.total_quantity }}</td>
-                        <td><a href="{{ entry.item_id }}">zoom</a></td>
+                        <td><a href="/inventory/items/zoom/{{ entry.item_id }}">zoom</a></td>
+                        <td><a href="/inventory/items/edit/{{ entry.item_id }}">edit</a></td>
                     </tr>
                 {% empty %}
                     <tr>

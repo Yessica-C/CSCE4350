@@ -9,23 +9,9 @@ from .models import Item, Location, Purchase_Order, Purchase_Order_Data
 from .utils import quantity_on_hand, quantity_on_hand_by_location, get_full_po
 
 def add_item(request):
-    #form submission
-    if request.method == 'POST':
-        name = request.POST.get('name')
-        description = request.POST.get('description')
-        price = request.POST.get('price')
-        last_cost = request.POST.get('last_cost')
-
-        # Create a new Item instance and save it to the database
-        item = Item(name=name, description=description, price=price, last_cost=last_cost)
-        item.save()
-
-        # Redirect to the all_items view after successful creation
-        return redirect('item_overview')
-    #entry
     highest_item_number = Item.objects.aggregate(max_number=Max('id'))['max_number']
     id = highest_item_number + 1 if highest_item_number is not None else 1
-    return render(request, 'inventory/add_item.html', {'id': id,})
+    return redirect('edit_item', item_id=id)
 
 def add_po(request):
     highest_po_number = Purchase_Order.objects.aggregate(max_number=Max('po_num'))['max_number']
@@ -57,6 +43,23 @@ def all_pos(request):
             'status': po.status
         })
     return render(request, 'inventory/all_pos.html', {'table': table})
+
+def edit_item(request, item_id):
+    #form submission
+        if request.method == 'POST':
+            name = request.POST.get('name')
+            description = request.POST.get('description')
+            price = request.POST.get('price')
+            last_cost = request.POST.get('last_cost')
+    
+            # Create a new Item instance and save it to the database
+            item = Item(name=name, description=description, price=price, last_cost=last_cost)
+            item.save()
+    
+            # Redirect to the all_items view after successful creation
+            return redirect('item_overview')
+        #entry
+        return render(request, 'inventory/edit_item.html', {'id': item_id,})
 
 def edit_po(request, po_num):
     if request.method == 'POST':#form submission

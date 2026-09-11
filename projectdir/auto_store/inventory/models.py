@@ -39,8 +39,10 @@ class Purchase_Order_Data(models.Model):
 class Purchase_Order(models.Model):
     class Status(models.TextChoices):
         UNPOSTED = 'UPST', ('Unposted')
-        OPEN = 'OPEN', ('Shipped')
+        OPEN = 'OPEN', ('Open')
         COMPLETE = 'CMPL', ('Complete')
     po_num = models.IntegerField(primary_key=True)
     order_date = models.DateField(null=True, blank=True)
     status = models.TextField(choices=Status.choices, default='Unposted', max_length=10)
+    def __str__(self):
+        return "PO #" + str(self.po_num)
