@@ -25,11 +25,11 @@ class Inventory_Entry(models.Model):
     def __str__(self):
         return "item #" +str(self.item_id) + " | location #" + str(self.location_id) + " | quantity:" + str(self.quantity_on_hand)
 
-class Purchase_Order(models.Model):
+class Purchase_Order_Data(models.Model):
     id = models.IntegerField(primary_key=True,auto_created=True)
     item_id = models.ForeignKey(Item, on_delete=models.CASCADE)
     location_id = models.ForeignKey(Location, on_delete=models.CASCADE)
-    po_num = models.IntegerField()
+    po_num = models.ForeignKey('Purchase_Order', on_delete=models.CASCADE)
     order_date = models.DateField()
     quantity_ordered = models.IntegerField()
     quantity_received = models.IntegerField(default=0)
@@ -37,3 +37,11 @@ class Purchase_Order(models.Model):
     posted = models.BooleanField(default=False)
     def __str__(self):
         return "PO #" + str(self.po_num) + " | item #" + str(self.item_id.id) + " | location #" + str(self.location_id.id) + " | ordered:" + str(self.quantity_ordered) + " | received:" + str(self.quantity_received)
+
+class Purchase_Order(models.Model):
+    class Status(models.TextChoices):
+        UNPOSTED = 'UPST', ('Unposted')
+        OPEN = 'OPEN', ('Shipped')
+        COMPLETE = 'CMPL', ('Complete')
+    po_num = models.IntegerField(primary_key=True)
+    status = models.TextField(choices=Status.choices, default='Unposted', max_length=10)

@@ -1,0 +1,59 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Add Purchase Order</title>
+</head>
+<body>
+    <div class="panel-container">
+        <h1>Add Purchase Order</h1>
+        <form method="post" id="purchase-order-form">
+            {% csrf_token %}
+
+            <label for="po_number">Po #{{new_po_num}}</label>
+            
+            <table>
+                <thead>
+                    <tr>
+                        <th>Item Number</th>
+                        <th>Quantity</th>
+                        <th>Cost</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody id="po-lines">
+                    <tr>
+                        <td><input type="text" name="name" required></td>
+                        <td><input type="number" name="quantity" min="0" required></td>
+                        <td><input type="number" name="cost" min="0" step="0.01" required></td>
+                        <td><button type="button" class="btn remove-line" onclick="removeLine(this)">Remove</button></td>
+                    </tr>
+                </tbody>
+            </table>
+            <p id="item-validation-error" role="alert" hidden></p>
+            <button class="btn" type="button" onclick="addLine()">Add Row</button>
+
+            <button class="btn" type="submit" name="action" value="post">POST</button>
+            <button class="btn" type="submit" name="action" value="save">Save Without Posting</button>
+        </form>
+        <a class="btn" href="/inventory/purchase_orders/">Cancel</a>
+    </div>
+    <script>
+        function addLine() {
+            const row = document.querySelector('#po-lines tr').cloneNode(true);
+            row.querySelectorAll('input').forEach(input => input.value = '');
+            document.getElementById('po-lines').appendChild(row);
+        }
+
+        function removeLine(button) {
+            const rows = document.querySelectorAll('#po-lines tr');
+            if (rows.length > 1) {
+                button.closest('tr').remove();
+            }
+        }
+        
+    </script>
+</body>
+</html>

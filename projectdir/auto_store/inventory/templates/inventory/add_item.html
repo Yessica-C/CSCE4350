@@ -13,8 +13,7 @@
         <form method="post">
             {% csrf_token %}
 
-            <label for="item-id">ID:</label>
-            <div id="item-id" class="readonly-field">{{ id }}</div>
+            <label for="item-id">ID: {{ id }}</label>
             
             <label for="name">Name:</label>
             <input type="text" id="name" name="name" required>

@@ -1,6 +1,6 @@
 from turtle import pos
 
-from .models import Inventory_Entry, Purchase_Order
+from .models import Inventory_Entry, Purchase_Order_Data
 
 def quantity_on_hand(item_id):
     sum = 0
@@ -24,14 +24,14 @@ def quantity_on_hand_by_location(item_id, location_id):
 
 def get_full_po(po_num):
     #get all purchase order entries with matching po_num
-    po = Purchase_Order.objects.filter(po_num=po_num)
+    po = Purchase_Order_Data.objects.filter(po_num=po_num)
     return po
 
 def get_po_number_list():
     #get all unique purchase order numbers
-    po_nums = Purchase_Order.objects.values_list('po_num', flat=True).distinct()
+    po_nums = Purchase_Order_Data.objects.values_list('po_num', flat=True).distinct()
     table = []
     for num in po_nums:
-        date = Purchase_Order.objects.filter(po_num=num).first().order_date
+        date = Purchase_Order_Data.objects.filter(po_num=num).first().order_date
         table.append({'po_num': num, 'date': date})
     return table

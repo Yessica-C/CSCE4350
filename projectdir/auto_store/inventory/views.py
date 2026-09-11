@@ -2,11 +2,12 @@ from django.shortcuts import get_object_or_404, redirect, render
 from django.http import Http404
 from django.contrib.auth import authenticate, authenticate, logout, login
 from django.db.models import Max
-from .models import Item, Location
+from .models import Item, Location, Purchase_Order_Data
 from .utils import quantity_on_hand, quantity_on_hand_by_location
 from .utils import get_full_po, get_po_number_list
 
 def add_item(request):
+    #form submission
     if request.method == 'POST':
         name = request.POST.get('name')
         description = request.POST.get('description')
@@ -19,10 +20,27 @@ def add_item(request):
 
         # Redirect to the all_items view after successful creation
         return redirect('item_overview')
-    
+    #entry
     highest_item_number = Item.objects.aggregate(max_number=Max('id'))['max_number']
     id = highest_item_number + 1 if highest_item_number is not None else 1
     return render(request, 'inventory/add_item.html', {'id': id,})
+
+def add_po(request):
+    #form submission
+    if request.method == 'POST':
+        value = request.POST.get('value')
+        if value == 'save':
+            # Keep the user on the form so the purchase order can be saved as a draft.
+            return render(request, 'inventory/add_po.html', {
+                'new_po_num': request.POST.get('po_num'),
+                'status': 'saved',
+            })
+        if value == 'post':
+            # A posted purchase order is complete and can be viewed with the other POs.
+            return redirect('all_pos')
+    highest_po_number = Purchase_Order_Data.objects.aggregate(max_number=Max('po_num'))['max_number']
+    new_po_num = highest_po_number + 1 if highest_po_number is not None else 1
+    return render(request, 'inventory/add_po.html', {'new_po_num': new_po_num})
 
 def all_items(request):
     items = Item.objects.all()

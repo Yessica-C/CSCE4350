@@ -9,6 +9,7 @@ urlpatterns = [
     path('inventory/items/add/', views.add_item, name="add_item"),
 	path('inventory/items/<int:item_id>/', views.item_zoom, name="item_zoom"),
     path('inventory/purchase_orders/', views.all_pos, name="purchase_order_overview"),
+    path('inventory/purchase_orders/add/', views.add_po, name="add_po"),
 	path('inventory/purchase_orders/<int:po_num>/', views.po_zoom, name="po_zoom"),
     path('login/', views.login_view, name="login"),
     path('logout/', views.logout_view, name="logout"),
