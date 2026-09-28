@@ -3,9 +3,10 @@ import json
 from django.shortcuts import get_object_or_404, redirect, render
 from django.http import Http404
 from django.contrib.auth import authenticate, authenticate, logout, login
-from django.db.models import Max
+from django.db import transaction
+from django.db.models import F, Max
 from django.utils import timezone
-from .models import Item, Location, Purchase_Order, Purchase_Order_Data
+from .models import Inventory_Entry, Item, Location, Purchase_Order, Purchase_Order_Data
 from .utils import quantity_on_hand, quantity_on_hand_by_location, get_full_po
 
 def add_item(request):
@@ -116,6 +117,54 @@ def homepage(request):
 def inventory_homepage(request):
     items = Item.objects.all()
     return render(request, 'inventory/inventory_homepage.html', {'items': items})
+
+def receiving(request):
+    if request.method == 'POST':
+        entry = get_object_or_404(
+            Purchase_Order_Data.objects.select_related('item_id', 'location_id', 'po_num'),
+            id=request.POST.get('entry_id'),
+        )
+        try:
+            total_received = int(request.POST.get('quantity_received', ''))
+        except (TypeError, ValueError):
+            total_received = -1
+
+        if total_received < 0 or total_received > entry.quantity_ordered:
+            entries = Purchase_Order_Data.objects.filter(
+                quantity_received__lt=F('quantity_ordered')
+            ).select_related('item_id', 'location_id', 'po_num')
+            return render(request, 'inventory/receiving.html', {
+                'entries': entries,
+                'error_message': 'Received quantity must be between 0 and the ordered quantity.',
+            }, status=400)
+
+        with transaction.atomic():
+            quantity_delta = total_received - entry.quantity_received
+            entry.quantity_received = total_received
+            entry.save(update_fields=['quantity_received'])
+
+            if quantity_delta:
+                inventory_entry, created = Inventory_Entry.objects.get_or_create(
+                    item_id=entry.item_id,
+                    location_id=entry.location_id,
+                    defaults={'quantity_on_hand': quantity_delta},
+                )
+                if not created:
+                    inventory_entry.quantity_on_hand += quantity_delta
+                    inventory_entry.save(update_fields=['quantity_on_hand'])
+
+            if not Purchase_Order_Data.objects.filter(
+                po_num=entry.po_num,
+                quantity_received__lt=F('quantity_ordered'),
+            ).exists():
+                entry.po_num.status = 'Complete'
+                entry.po_num.save(update_fields=['status'])
+        return redirect('receiving')
+
+    entries = Purchase_Order_Data.objects.filter(
+        quantity_received__lt=F('quantity_ordered')
+    ).select_related('item_id', 'location_id', 'po_num')
+    return render(request, 'inventory/receiving.html', {'entries': entries})
 
 def item_zoom(request, item_id):
     try:

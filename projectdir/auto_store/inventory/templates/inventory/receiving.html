@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Receiving</title>
+</head>
+<body>
+	<header>
+		<h1>Receiving</h1>
+	</header>
+	<p><a href="{% url 'inventory_homepage' %}">Inventory Home</a></p>
+	{% if error_message %}
+		<p role="alert">{{ error_message }}</p>
+	{% endif %}
+	{% if entries %}
+	<table>
+		<thead>
+			<tr>
+				<th>PO Number</th>
+				<th>Item</th>
+				<th>Location</th>
+				<th>Ordered</th>
+				<th>Received</th>
+				<th>Total quantity received</th>
+			</tr>
+		</thead>
+		<tbody>
+		{% for entry in entries %}
+			<tr>
+				<td>{{ entry.po_num.po_num }}</td>
+				<td>{{ entry.item_id.id }} - {{ entry.item_id.name }}</td>
+				<td>{{ entry.location_id.name }}</td>
+				<td>{{ entry.quantity_ordered }}</td>
+				<td>{{ entry.quantity_received }}</td>
+				<td>
+					<form method="post">
+						{% csrf_token %}
+						<input type="hidden" name="entry_id" value="{{ entry.id }}">
+						<label for="received-{{ entry.id }}">Total received</label>
+						<input id="received-{{ entry.id }}" type="number" name="quantity_received"
+							min="{{ entry.quantity_received }}" max="{{ entry.quantity_ordered }}"
+							value="{{ entry.quantity_received }}" required>
+						<button type="submit">Mark received</button>
+					</form>
+				</td>
+			</tr>
+		{% endfor %}
+		</tbody>
+	</table>
+	{% else %}
+		<p>No items are waiting to be received.</p>
+	{% endif %}
+</body>
+</html>

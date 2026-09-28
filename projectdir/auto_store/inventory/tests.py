@@ -40,4 +40,47 @@ class PurchaseOrderDeleteTests(TestCase):
 		self.assertFalse(Purchase_Order.objects.filter(po_num=1).exists())
 		self.assertFalse(Purchase_Order_Data.objects.filter(po_num=1).exists())
 
+	def test_receiving_updates_received_quantity_and_inventory(self):
+		entry = Purchase_Order_Data.objects.get(po_num=1)
+
+		response = self.client.post('/inventory/receiving/', {
+			'entry_id': entry.id,
+			'quantity_received': 1,
+		})
+
+		self.assertRedirects(response, '/inventory/receiving/')
+		entry.refresh_from_db()
+		self.assertEqual(entry.quantity_received, 1)
+		self.assertEqual(
+			entry.item_id.inventory_entry_set.get(location_id=entry.location_id).quantity_on_hand,
+			1,
+		)
+
+	def test_receiving_does_not_double_count_existing_received_quantity(self):
+		entry = Purchase_Order_Data.objects.get(po_num=1)
+		entry.quantity_received = 1
+		entry.save(update_fields=['quantity_received'])
+
+		self.client.post('/inventory/receiving/', {
+			'entry_id': entry.id,
+			'quantity_received': 2,
+		})
+
+		entry.refresh_from_db()
+		self.assertEqual(entry.quantity_received, 2)
+		self.assertEqual(
+			entry.item_id.inventory_entry_set.get(location_id=entry.location_id).quantity_on_hand,
+			1,
+		)
+
+	def test_receiving_all_ordered_items_completes_purchase_order(self):
+		entry = Purchase_Order_Data.objects.get(po_num=1)
+
+		self.client.post('/inventory/receiving/', {
+			'entry_id': entry.id,
+			'quantity_received': entry.quantity_ordered,
+		})
+
+		self.assertEqual(Purchase_Order.objects.get(po_num=1).status, 'Complete')
+
 # Create your tests here.
