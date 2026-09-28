@@ -11,6 +11,20 @@
 	</header>
 	<p><a href="/inventory/">Inventory Home</a></p>
 	<p><a href="/inventory/purchase_orders/add">Add Purchase Order</a></p>
+    <form method="get">
+        <fieldset>
+            <legend>Filter by status</legend>
+            {% for status in statuses %}
+                <label>
+                    <input type="checkbox" name="status" value="{{ status }}"
+                        {% if status in selected_statuses %}checked{% endif %}>
+                    {{ status }}
+                </label>
+            {% endfor %}
+            <button type="submit">Apply filter</button>
+            <a href="{% url 'purchase_order_overview' %}">Clear filter</a>
+        </fieldset>
+    </form>
     <table>
         <tbody>
             <tr>

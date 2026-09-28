@@ -35,15 +35,27 @@ def all_items(request):
     return render(request, 'inventory/all_items.html', {'table': table})
 
 def all_pos(request):
-    #get each PO, return table of relevant information
+    statuses = ['Unposted', 'Open', 'Complete']
+    selected_statuses = [
+        status for status in request.GET.getlist('status')
+        if status in statuses
+    ]
+    purchase_orders = Purchase_Order.objects.all()
+    if selected_statuses:
+        purchase_orders = purchase_orders.filter(status__in=selected_statuses)
+
     table = []
-    for po in Purchase_Order.objects.all():
+    for po in purchase_orders:
         table.append({
             'po_num': po.po_num,
             'date': po.order_date,
             'status': po.status
         })
-    return render(request, 'inventory/all_pos.html', {'table': table})
+    return render(request, 'inventory/all_pos.html', {
+        'table': table,
+        'statuses': statuses,
+        'selected_statuses': selected_statuses,
+    })
 
 def delete_po(request, po_num):
     po = get_object_or_404(Purchase_Order, po_num=po_num)
@@ -163,6 +175,17 @@ def po_zoom(request, po_num):
     return render(request, 'inventory/po_zoom.html', {'po_object': po_object, 'po_table': po_table})
 
 def receiving(request):
+    po_number = (request.GET.get('po_num') or request.POST.get('po_num', '')).strip()
+    entries = Purchase_Order_Data.objects.filter(
+        quantity_received__lt=F('quantity_ordered')
+    ).select_related('item_id', 'location_id', 'po_num')
+
+    if po_number:
+        try:
+            entries = entries.filter(po_num_id=int(po_number))
+        except ValueError:
+            entries = entries.none()
+
     if request.method == 'POST':
         entry = get_object_or_404(
             Purchase_Order_Data.objects.select_related('item_id', 'location_id', 'po_num'),
@@ -174,11 +197,9 @@ def receiving(request):
             total_received = -1
 
         if total_received < 0 or total_received > entry.quantity_ordered:
-            entries = Purchase_Order_Data.objects.filter(
-                quantity_received__lt=F('quantity_ordered')
-            ).select_related('item_id', 'location_id', 'po_num')
             return render(request, 'inventory/receiving.html', {
                 'entries': entries,
+                'po_number': po_number,
                 'error_message': 'Received quantity must be between 0 and the ordered quantity.',
             }, status=400)
 
@@ -203,9 +224,11 @@ def receiving(request):
             ).exists():
                 entry.po_num.status = 'Complete'
                 entry.po_num.save(update_fields=['status'])
+        if po_number:
+            return redirect(f'/inventory/receiving/?po_num={po_number}')
         return redirect('receiving')
 
-    entries = Purchase_Order_Data.objects.filter(
-        quantity_received__lt=F('quantity_ordered')
-    ).select_related('item_id', 'location_id', 'po_num')
-    return render(request, 'inventory/receiving.html', {'entries': entries})
+    return render(request, 'inventory/receiving.html', {
+        'entries': entries,
+        'po_number': po_number,
+    })

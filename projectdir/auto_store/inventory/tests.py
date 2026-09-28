@@ -83,4 +83,34 @@ class PurchaseOrderDeleteTests(TestCase):
 
 		self.assertEqual(Purchase_Order.objects.get(po_num=1).status, 'Complete')
 
+	def test_receiving_can_filter_open_entries_by_po_number(self):
+		second_po = Purchase_Order.objects.create(po_num=2)
+		second_entry = Purchase_Order_Data.objects.create(
+			item_id=Item.objects.get(id=1),
+			location_id=Location.objects.get(id=1),
+			po_num=second_po,
+			quantity_ordered=3,
+			item_cost='8.00',
+		)
+
+		response = self.client.get('/inventory/receiving/?po_num=2')
+
+		filtered_entries = list(response.context['entries'])
+		self.assertEqual(len(filtered_entries), 1)
+		self.assertEqual(filtered_entries[0].po_num.po_num, second_po.po_num)
+		self.assertContains(response, 'value="2"')
+
+	def test_purchase_orders_can_filter_by_selected_statuses(self):
+		Purchase_Order.objects.create(po_num=2, status='Open')
+		Purchase_Order.objects.create(po_num=3, status='Complete')
+
+		response = self.client.get('/inventory/purchase_orders/?status=Open')
+
+		filtered_orders = response.context['table']
+		self.assertEqual(len(filtered_orders), 1)
+		self.assertEqual(filtered_orders[0]['status'], 'Open')
+		self.assertEqual(response.context['selected_statuses'], ['Open'])
+		self.assertContains(response, 'value="Open"')
+		self.assertContains(response, 'checked')
+
 # Create your tests here.

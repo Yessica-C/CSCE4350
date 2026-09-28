@@ -10,6 +10,14 @@
 		<h1>Receiving</h1>
 	</header>
 	<p><a href="{% url 'inventory_homepage' %}">Inventory Home</a></p>
+	<form method="get">
+		<label for="po-number">PO number</label>
+		<input id="po-number" type="number" name="po_num" min="1" value="{{ po_number }}">
+		<button type="submit">Filter</button>
+		{% if po_number %}
+			<a href="{% url 'receiving' %}">Clear filter</a>
+		{% endif %}
+	</form>
 	{% if error_message %}
 		<p role="alert">{{ error_message }}</p>
 	{% endif %}
@@ -36,6 +44,9 @@
 				<td>
 					<form method="post">
 						{% csrf_token %}
+						{% if po_number %}
+						<input type="hidden" name="po_num" value="{{ po_number }}">
+						{% endif %}
 						<input type="hidden" name="entry_id" value="{{ entry.id }}">
 						<label for="received-{{ entry.id }}">Total received</label>
 						<input id="received-{{ entry.id }}" type="number" name="quantity_received"
