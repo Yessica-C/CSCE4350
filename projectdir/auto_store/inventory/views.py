@@ -45,6 +45,13 @@ def all_pos(request):
         })
     return render(request, 'inventory/all_pos.html', {'table': table})
 
+def delete_po(request, po_num):
+    po = get_object_or_404(Purchase_Order, po_num=po_num)
+    if request.method == 'POST':
+        po.delete()
+        return redirect('purchase_order_overview')
+    return render(request, 'inventory/delete_po.html', {'po_object': po})
+
 def edit_item(request, item_id):
     #form submission
         if request.method == 'POST':
@@ -118,6 +125,43 @@ def inventory_homepage(request):
     items = Item.objects.all()
     return render(request, 'inventory/inventory_homepage.html', {'items': items})
 
+
+def item_zoom(request, item_id):
+    try:
+        item = Item.objects.get(id=item_id)
+    except Item.DoesNotExist:
+        return render(request, 'inventory/item_not_found.html', status=404)
+    locations = Location.objects.all()
+    loc_table = []
+    for location in locations:
+        loc_table.append({
+            'location_id': location.id,
+            'location_address': location.address,
+            'quantity_on_hand': quantity_on_hand_by_location(item_id, location.id)
+        })
+    return render(request, 'inventory/item_zoom.html', {'item': item, 'loc_table': loc_table, 'total_quantity': quantity_on_hand(item_id)})
+
+def login_view(request):
+    if request.method == 'POST':
+        username = request.POST["username"]
+        password = request.POST["password"]
+        user = authenticate(request, username=username, password=password)
+        if user is not None:
+            login(request, user)
+            return redirect('/')
+        else:
+            return render(request, 'inventory/login.html', {'error_message': 'Invalid username or password.'})
+    return render(request, 'inventory/login.html')
+
+def logout_view(request):
+    logout(request)
+    return render(request, 'inventory/logout.html')
+
+def po_zoom(request, po_num):
+    po_table = get_full_po(po_num)
+    po_object = Purchase_Order.objects.get(po_num=po_num)
+    return render(request, 'inventory/po_zoom.html', {'po_object': po_object, 'po_table': po_table})
+
 def receiving(request):
     if request.method == 'POST':
         entry = get_object_or_404(
@@ -165,46 +209,3 @@ def receiving(request):
         quantity_received__lt=F('quantity_ordered')
     ).select_related('item_id', 'location_id', 'po_num')
     return render(request, 'inventory/receiving.html', {'entries': entries})
-
-def item_zoom(request, item_id):
-    try:
-        item = Item.objects.get(id=item_id)
-    except Item.DoesNotExist:
-        return render(request, 'inventory/item_not_found.html', status=404)
-    locations = Location.objects.all()
-    loc_table = []
-    for location in locations:
-        loc_table.append({
-            'location_id': location.id,
-            'location_address': location.address,
-            'quantity_on_hand': quantity_on_hand_by_location(item_id, location.id)
-        })
-    return render(request, 'inventory/item_zoom.html', {'item': item, 'loc_table': loc_table, 'total_quantity': quantity_on_hand(item_id)})
-
-def login_view(request):
-    if request.method == 'POST':
-        username = request.POST["username"]
-        password = request.POST["password"]
-        user = authenticate(request, username=username, password=password)
-        if user is not None:
-            login(request, user)
-            return redirect('/')
-        else:
-            return render(request, 'inventory/login.html', {'error_message': 'Invalid username or password.'})
-    return render(request, 'inventory/login.html')
-
-def logout_view(request):
-    logout(request)
-    return render(request, 'inventory/logout.html')
-
-def po_zoom(request, po_num):
-    po_table = get_full_po(po_num)
-    po_object = Purchase_Order.objects.get(po_num=po_num)
-    return render(request, 'inventory/po_zoom.html', {'po_object': po_object, 'po_table': po_table})
-
-def delete_po(request, po_num):
-    po = get_object_or_404(Purchase_Order, po_num=po_num)
-    if request.method == 'POST':
-        po.delete()
-        return redirect('purchase_order_overview')
-    return render(request, 'inventory/delete_po.html', {'po_object': po})
