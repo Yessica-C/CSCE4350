@@ -1,2 +1,4 @@
 gitIgnored
+*.pyc
 .VSCodeCounter/*
+projectdir/auto_store/inventory/__pycache__/views.cpython-314.pyc
