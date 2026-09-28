@@ -13,6 +13,7 @@ urlpatterns = [
     path('inventory/purchase_orders/add/', views.add_po, name="add_po"),
     path('inventory/purchase_orders/edit/<int:po_num>/', views.edit_po, name="edit_po"),
 	path('inventory/purchase_orders/zoom/<int:po_num>/', views.po_zoom, name="po_zoom"),
+    path('inventory/purchase_orders/delete/<int:po_num>/', views.delete_po, name="delete_po"),
     path('login/', views.login_view, name="login"),
     path('logout/', views.logout_view, name="logout"),
 ]

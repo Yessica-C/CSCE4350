@@ -26,7 +26,7 @@
                         <td>| <a href="/inventory/purchase_orders/zoom/{{ entry.po_num }}">zoom</a></td>
                         {% if entry.status == 'Unposted' %}
                             <td>| <a href="/inventory/purchase_orders/edit/{{ entry.po_num }}">edit</a></td>
-                            <td>| <a href="/inventory/purchase_orders/delete/{{ entry.po_num }}">delete</a></td>
+                            <td>| <a href="/inventory/purchase_orders/delete/{{ entry.po_num }}/">delete</a></td>
                         {% endif %}
                     </tr>
                 {% endfor %}

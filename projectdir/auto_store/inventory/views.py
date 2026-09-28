@@ -152,3 +152,10 @@ def po_zoom(request, po_num):
     po_table = get_full_po(po_num)
     po_object = Purchase_Order.objects.get(po_num=po_num)
     return render(request, 'inventory/po_zoom.html', {'po_object': po_object, 'po_table': po_table})
+
+def delete_po(request, po_num):
+    po = get_object_or_404(Purchase_Order, po_num=po_num)
+    if request.method == 'POST':
+        po.delete()
+        return redirect('purchase_order_overview')
+    return render(request, 'inventory/delete_po.html', {'po_object': po})
