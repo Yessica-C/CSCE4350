@@ -46,3 +46,23 @@ class Purchase_Order(models.Model):
     status = models.TextField(choices=Status.choices, default='Unposted', max_length=10)
     def __str__(self):
         return "PO #" + str(self.po_num)
+
+class Timecard_Entry(models.Model):
+    id = models.IntegerField(primary_key=True,auto_created=True)
+    employee_id = models.ForeignKey('auth.User', on_delete=models.CASCADE)
+    location_id = models.ForeignKey(Location, on_delete=models.CASCADE)
+    start_timestamp = models.DateTimeField()
+    end_timestamp = models.DateTimeField(null=True, blank=True)
+
+class Sale(models.Model):
+    customer = models.BigIntegerField()
+    location_id = models.ForeignKey(Location, on_delete=models.CASCADE)
+    status = models.CharField(max_length=20)
+    type = models.CharField(max_length=20)
+
+class Sale_Entry(models.Model):
+    order_id = models.ForeignKey(Sale, on_delete=models.CASCADE, db_column='order_id')
+    item = models.ForeignKey(Item, on_delete=models.CASCADE, db_column='item')
+    quantity = models.BigIntegerField()
+    price = models.FloatField()
+    time_of_sale = models.DateTimeField()
