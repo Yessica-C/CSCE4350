@@ -113,4 +113,36 @@ class PurchaseOrderDeleteTests(TestCase):
 		self.assertContains(response, 'value="Open"')
 		self.assertContains(response, 'checked')
 
+
+class ItemSearchTests(TestCase):
+	def setUp(self):
+		Item.objects.create(
+			id=1,
+			name='Blue Widget',
+			description='First item',
+			price='10.00',
+			last_cost='8.00',
+		)
+		Item.objects.create(
+			id=2,
+			name='Red Gadget',
+			description='Second item',
+			price='12.00',
+			last_cost='9.00',
+		)
+
+	def test_items_can_filter_by_name_or_id(self):
+		name_response = self.client.get('/inventory/items/?search=widget')
+		self.assertEqual(
+			[name['item_id'] for name in name_response.context['table']],
+			[1],
+		)
+
+		id_response = self.client.get('/inventory/items/?search=2')
+		self.assertEqual(
+			[item['item_id'] for item in id_response.context['table']],
+			[2],
+		)
+		self.assertContains(id_response, 'value="2"')
+
 # Create your tests here.

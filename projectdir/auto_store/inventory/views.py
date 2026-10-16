@@ -4,7 +4,7 @@ from django.shortcuts import get_object_or_404, redirect, render
 from django.http import Http404
 from django.contrib.auth import authenticate, authenticate, logout, login
 from django.db import transaction
-from django.db.models import F, Max
+from django.db.models import F, Max, Q
 from django.utils import timezone
 from .models import Inventory_Entry, Item, Location, Purchase_Order, Purchase_Order_Data
 from .utils import quantity_on_hand, quantity_on_hand_by_location, get_full_po
@@ -22,6 +22,13 @@ def add_po(request):
 
 def all_items(request):
     items = Item.objects.all()
+    search = request.GET.get('search', '').strip()
+    if search:
+        item_filters = Q(name__icontains=search)
+        if search.isdigit():
+            item_filters |= Q(id=int(search))
+        items = items.filter(item_filters)
+
     table = []
     for item in items:
         table.append({
@@ -32,7 +39,10 @@ def all_items(request):
             'item_last_cost': item.last_cost,
             'total_quantity': quantity_on_hand(item.id)
         })
-    return render(request, 'inventory/all_items.html', {'table': table})
+    return render(request, 'inventory/all_items.html', {
+        'table': table,
+        'search': search,
+    })
 
 def all_pos(request):
     statuses = ['Unposted', 'Open', 'Complete']

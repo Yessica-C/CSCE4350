@@ -7,9 +7,14 @@
 </head>
 <body>
 	<h1>All Items</h1>
-    <a href="/inventory/">Inventory Home</a>
+    <a href="/inventory/"><button type="button">Inventory Home</button></a>
     <a href="/inventory/items/add/"><button type="button">Create New Item</button></a>
-    
+
+    <form method="get">
+        <label for="item-search">Search by ID or name:</label>
+        <input id="item-search" type="search" name="search" value="{{ search }}">
+        <button type="submit">Search</button>
+    </form>
     
 	<table>
 		<tbody>
