@@ -57,6 +57,7 @@ class Timecard_Entry(models.Model):
 class Sale(models.Model):
     customer = models.BigIntegerField()
     location_id = models.ForeignKey(Location, on_delete=models.CASCADE)
+    customer = models.ForeignKey('auth.User', on_delete=models.CASCADE)
     status = models.CharField(max_length=20)
     type = models.CharField(max_length=20)
 
